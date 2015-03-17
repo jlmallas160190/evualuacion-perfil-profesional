@@ -1,0 +1,13 @@
+{% extends "admin/base_site.html"%}
+
+
+{% block title %}  Gracias  {% endblock %}
+
+{% block content %}
+<h1> {{mensaje}}</h1>
+
+<a href="{% url 'app.views.login' %}"> 
+    <<< Salir>>> 
+  </a>
+</p>
+{% endblock %}

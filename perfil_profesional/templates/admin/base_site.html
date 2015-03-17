@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+<style>
+  .contenido {
+      border: 1px solid #ccc;
+      margin-bottom: 5px;
+      background: white;
+      min-height: 400px;
+  }
+</style>
+{% endblock %}
+
+{% block title %} Test Perfil Profesional {% endblock %}
+
+{% block branding %}
+   <h1 id="site-name">  Test Perfil Profesional </h1>
+   {% if user and not user.is_anonymous and not user.is_staff %}
+   <div id="user-tools"> 
+     Bienvenido/a,
+     <strong> {{usuario.estudiante}} </strong>
+     <a href="javascript:window.history.back();"> [Regresar]  </a>
+     <a href="/logout/" class="historylink"> [Salir] </a>
+   </div>
+   {% else %}
+   {{ block.supper }}
+   {% endif %}
+{% endblock %}
+
+{% block object_tools %}
+{% endblock %}
+
+{% block nav-global %}
+{% endblock %}
+
+<div class="contenido">
+{% block content %}
+
+{% endblock %}
+</div>
+
+{% block footer %}
+
+   {% if request.user and not request.user.is_anonymous  %}
+   <div id="pie" style="font-size: 9px; line-height: 10px; color: #666666">
+     <center>
+       <hr style="margin-bottom: 3px;"/>
+       <b> {{ "Universidad Nacional de Loja"|upper }} </b> <br/>
+      Carrea de Ingenieria en Sistemas <br>
+       Loja - Ecuador
+     </center>
+   </div>
+   {% endif %}
+
+{% endblock %}

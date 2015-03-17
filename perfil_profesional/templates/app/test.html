@@ -1,0 +1,188 @@
+{%  extends "admin/base_site.html" %}
+
+{% load i18n %}
+
+
+{% block extrahead %}
+
+   {{ block.super }}
+
+    <style type="text/css">
+    #encabezado {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	align: center;
+    }
+
+    .seccion{
+	
+        background-color:  	#336699;
+		color:#FFFFFF;
+    }
+
+    .td-item-seleccion{
+	border: 2px white solid;
+	background-color: #F5DEB3;
+	text-align: center;
+        display: table-cell;
+	/* Para cortar las palabras al ancho de la celda */
+        word-break: break-all;
+        
+    }
+
+    .td-tabla-contenedor {
+        border-bottom: 1px dotted  #B4CBE5;
+        border-left: 1px dashed  #B4CBE5;
+			
+    }
+
+    #tabla-items{
+	width: 100%;
+	background-color: #EDF3FE;
+    }
+    </style>
+
+    <script type="text/javascript" src="/static/js/jquery-1.6.2.min.js"> </script>
+<script>
+function regresar(){
+javascript:window.history.back();
+}
+function validarSeleccion(){
+    var preguntas = new Array();
+    // Se validan como obligatorias todas las preguntas de Selección Unica
+    $.each($('#formulario input[value^="pregunta"]:checkbox'), function(){
+	var nombre = $(this).attr("value");
+	preguntas[nombre] = nombre;
+    });
+    for (var pregunta in preguntas){
+	if (! $('#formulario input[value=' + pregunta +']:checkbox').is(':checked') ){
+	    alert('ERROR: Faltan preguntas por contestar');
+	    return false;
+	}
+	
+    }
+    return true;
+};
+function grabarEncuesta(){
+    /* Se trata de la Evaluacion de Actividades Adicionales a la Docencia 2011-2012 */
+    if( validarSeleccion()==true){
+		$('#formulario').submit();	
+		}
+    /*$.ajax({
+	url: "/encuesta/grabar/",
+	method: "POST",
+	//data: "periodo_academico_id={{ object_id }}",
+	success: function (data){
+	    alert(data);
+	},
+	error: function(xhr,status,error){
+	    alert("error: " + status + "-" + error);
+	}
+    });*/
+}
+
+$(document).ready(function(){
+    $('#grabar').click(function(){
+	    grabarEncuesta();	
+
+    });
+	$('#regresar').click(function(){
+	   regresar();	
+
+    });
+});
+</script>
+    {% endblock %}
+
+
+{% block content_title %}
+
+<h3> {{ cuestionario.titulo }} </h3>
+
+{% endblock %}
+
+
+{% block content %}
+<form action="/test/grabar/" method="post" id="formulario" name="formulario" >
+  {% csrf_token %}
+  
+  <table id="tabla-contenedor">
+  <td colspan="2">
+	<div id="encabezado-cuestionario" width="25%">
+	    {{ cuestionario.nombre|safe }} 
+	</div>
+	   <div id="datos_academicos" style="line-height: 18px;">
+		Estudiante:  <b> {{ estudiante|upper }} </b> <br/>
+	    Fecha de Test: <b> {{ fecha }} </b> <br/>
+	   </div>
+	</td>
+	<tbody>	
+	{% for seccion in cuestionario.secciones.all %}  <!-- secciones de cuestionario -->
+	 {% if  seccion.preguntas.all|length > 0 %} 
+	  <tr>
+		<td class="seccion" colspan="3" > 
+		  <b> {{ seccion.titulo|upper }} </b> 
+		 <!--  {{ seccion.descripcion }}   -->
+		</td>
+	  </tr>
+	  
+	    {% for pregunta in seccion.preguntas.all %} <!-- preguntas de secciones  -->
+		{% if pregunta.items.all|length > 0 %}
+	  <tr>
+		<td class="td-tabla-contenedor" >
+		  <b>
+			{{ pregunta.orden }}.
+		  </b> 
+		  <!-- preguntas -->
+		  <label style="background-color: #FFFFFF" ><b>{{ pregunta.texto|safe }}</b></label>
+		  <br/>
+		  
+		</td>
+		</tr>
+		<!-- items pregunta de seccion si es de seleccion -->
+		<tr>
+		<td class="td-tabla-contenedor" width="100%">
+		  <table id="tabla-items">
+			<tbody>
+			  <tr>
+				{% for item in pregunta.items.all %}
+				<!--TODO: Dividir para el numero exacto de items de la pregunta Ej. width: 25%-->
+		
+				<tr>
+				<td  style="text-align:left" >
+				  <input type="checkbox" name="{{item.caracteristica.id}}"  value="pregunta-{{ pregunta.id }}"> </input> 
+				  <b> {{ item.caracteristica.nombre }} </b>
+				  <br/>
+				  </td>
+				 </tr> 
+				
+				
+				{% endfor%}
+
+			
+			  </tr>
+			</tbody>
+		  </table>
+		</td>
+		
+		<!--/ items pregunta de seccion si es de seleccion -->
+	  </tr> 
+	  {%endif%}
+	  {% endfor %} <!--/ preguntas de seccion -->
+		{%endif%}
+	  {% endfor %} <!--/ secciones de cuestionario -->
+	  </tbody>	
+	  	<tfoot>
+	  <div id="comandos">
+		<tr>
+		  <td colspan="2"> 
+			<input type="button" id="grabar" name="grabar" value="GRABAR"/>  
+			<input type="reset" value="BORRAR"/>
+			<input type="button" id="regresar" name="regresar" value="CANCELAR"/>  
+		  </td>
+		</tr>
+	  </div>
+	  </tfoot>
+	</table>
+</form>
+{% endblock %}

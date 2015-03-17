@@ -1,0 +1,38 @@
+{%  extends "admin/base_site.html" %}
+
+{% load i18n %}
+
+
+{% block extrahead %}
+
+   {{ block.super }}
+ <script type="text/javascript" src="/static/js/jquery-1.6.2.min.js"> </script>
+<script>
+$(document).ready(function(){
+    $('#grabar').click(function(){
+	   $('#formulario').submit();	
+    });
+});
+</script>
+    {% endblock %}
+
+
+{% block content_title %}
+
+
+{% endblock %}
+
+
+{% block content %}
+	   
+<form action="/usuarios/grabar/" method="post" id="formulario" name="formulario" >
+{% csrf_token %}  
+  
+	  <div id="comandos">
+		<tr>
+		  <td colspan="2"> 
+			<input type="button" id="grabar" name="grabar" value="GRABAR"/>  
+		  </td>
+		</tr>
+</form>
+{% endblock %}
